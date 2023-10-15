@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" 
+integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" 
+crossorigin="anonymous">
+  </head>
+</html>
+========================================================================
+import { BrowserRouter } from 'react-router-dom';
+<React.StrictMode>
+  <BrowserRouter><App /></BrowserRouter>
+</React.StrictMode>
+====================================================
+APP..
+import logo from './logo.svg';
+import './App.css';
+import { Routes, Route } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import Home from './component/home';
+import One from './component/one';
+import Two from './component/two';
+
+function App() {
+
+  const fetchData = async () => {
+    try {
+      const data = await fetch('http://localhost:4000/local');
+      console.log('data', data)
+    } catch (error) {
+
+    }
+  }
+
+  return (
+    <div className="App">
+      <div>React Code</div>
+      <div>
+      <NavLink to='/'>Home</NavLink>
+        <NavLink to='/one'>One</NavLink>
+        <NavLink to='/two'>Two</NavLink>
+        <Routes>
+          <Route exact path="/" element={<Home />}>Home</Route>
+          <Route exact path="/one" element={<One />}>One</Route>
+          <Route exact path="/two" element={<Two />}>Two</Route>
+        </Routes>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+=========================================================
+Home..
+import React, { useState, useEffect } from "react";
+import xlsx from "json-as-xlsx"
+
+function Home() {
+
+    const [list, setList] = useState([])
+
+    useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = async () => {
+        try {
+            fetch('http://localhost:4000/local/list')
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('data', data)
+                    setList(data.counter)
+                })
+                .catch((error) => {
+                    console.error('Error fetching data:', error);
+                });
+        } catch (error) {
+
+        }
+    }
+
+    const exportFile = () =>{
+        // fetch('http://localhost:4000/local/export')
+        //         .then((response) => response.json())
+        //         .then((data) => {
+        //             console.log('data', data)
+        //             setList(data.counter)
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error fetching data:', error);
+        //         });
+        try {
+            
+                let data = [
+                  {
+                    sheet: "Sheet",
+                    columns: [
+                      { label: "Code", value: "code" }, // Top level data
+                      { label: "Name", value: "name" }, // Custom format
+                      { label: "Count", value:"count" }, // Run functions
+                    ],
+                    content: list
+                  }
+                ]
+                let settings = {
+                  fileName: "dataSheet",
+                }
+                xlsx(data, settings)
+        } catch (error) {
+            
+        }
+    }
+
+    return (
+        <div className="container">
+            <div className="row">
+                <button type="button" className="btn btn-default text-right" onClick={()=> exportFile()}>Export</button>
+            </div>
+
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th>SN</th>
+                        <th>Name</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        list.map((i, j)=>{
+                            return(
+                                <tr key={j+1}>
+                                    <td>{i.code}</td>
+                                    <td>{i.name}</td>
+                                    <td>{i.count || 1}</td>
+                                </tr>
+                            )
+                        })
+                    }
+                    
+
+                </tbody>
+            </table>
+        </div>
+    )
+}
+
+export default Home
+==============================================================
+app.get('/local/:type', (req, res) => {
+
+  let type = req.params.type;
+  console.log('type', type)
+  let ddc = [
+    { "id": 1, "name": "abc", "parentId": null },
+    { "id": 2, "name": "abc2", "parentId": 1 },
+    { "id": 3, "name": "abc3", "parentId": 1 },
+    { "id": 4, "name": "abc4", "parentId": 1 },
+    { "id": 5, "name": "abc5", "parentId": 1 },
+    { "id": 6, "name": "abc6", "parentId": 1 },
+    { "id": 7, "name": "abc7", "parentId": 2 },
+    { "id": 8, "name": "abc8", "parentId": 2 },
+    { "id": 9, "name": "abc9", "parentId": 2 },
+    { "id": 10, "name": "abc10", "parentId": null },
+    { "id": 11, "name": "abc11", "parentId": 10 },
+    { "id": 12, "name": "abc12", "parentId": 10 },
+    { "id": 13, "name": "abc13", "parentId": 10 },
+    { "id": 14, "name": "abc14", "parentId": 10 },
+    { "id": 15, "name": "abc15", "parentId": 10 },
+    { "id": 16, "name": "abc16", "parentId": 10 },
+    { "id": 17, "name": "abc17", "parentId": 12 },
+    { "id": 18, "name": "abc18", "parentId": 12 },
+    { "id": 19, "name": "abc19", "parentId": 12 },
+    { "id": 20, "name": "abc20", "parentId": 12 },
+    { "id": 21, "name": "abc21", "parentId": 12 },
+    { "id": 22, "name": "abc22", "parentId": 12 },
+    { "id": 23, "name": "abc23", "parentId": 13 },
+    { "id": 24, "name": "abc24", "parentId": 13 },
+    { "id": 25, "name": "abc25", "parentId": 13 },
+    { "id": 26, "name": "abc26", "parentId": 13 },
+    { "id": 27, "name": "abc27", "parentId": 4 },
+    { "id": 28, "name": "abc28", "parentId": 4 },
+    { "id": 29, "name": "abc29", "parentId": 4 },
+    { "id": 30, "name": "abc30", "parentId": 4 }
+  ];
+
+
+  const grouped = _.groupBy(ddc, i => i.parentId);
+
+  function childrenOf(d) {
+
+    let parentId = d?.id || null;
+    return (grouped[parentId] || []).map((i, j) => ({
+      id: i.id,
+      name: (d?.name) ? `${d?.name} - ${i.name}` : i.name,
+      parentId: (i.parentId) ? i.parentId : 0,
+      code: (!i.parentId) ? 0 : `${i.parentId}.${j + 1}`,
+      sub_arr: childrenOf(i)
+    }));
+  }
+
+  let ll = childrenOf(null)
+  let fn = mergeSubArrays(ll)
+  if (type == 'list') {
+    res.json({ msg: "loaded", counter: fn })
+  } else {
+  }
+})
+function mergeSubArrays(data) {
+  let mergedArray = [];
+
+  data.forEach(item => {
+    mergedArray.push({ code: item.code, name: item.name, id: item.id, parentId: item.parentId });
+
+    if (item.sub_arr) {
+      const subArray = mergeSubArrays(item.sub_arr);
+      mergedArray = mergedArray.concat(subArray);
+    }
+  });
+  let dd = _.orderBy(mergedArray, ['parentId'], ['asc']);
+  return dd;
+}
